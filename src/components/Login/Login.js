@@ -4,6 +4,7 @@ import "firebase/auth";
 import firebaseConfig from './firebase.config';
 import {UserContext} from '../../App';
 import { useHistory, useLocation } from 'react-router-dom';
+import { StoreSharp } from '@material-ui/icons';
 
 const Login = () => {
     const [loggedInUser, setLoggedInUser] = useContext(UserContext);
@@ -21,11 +22,22 @@ const Login = () => {
             const {displayName, email} = result.user;
             const signedInUser = {name: displayName, email} 
             setLoggedInUser(signedInUser);
+            storeAuthToken()
             history.replace(from);
-            // ...
           }).catch(function(error) {
             const errorMessage = error.message;
             console.log(errorMessage);
+          });
+    }
+
+    const storeAuthToken = () =>{
+        firebase.auth().currentUser.getIdToken(true)
+        .then(function(idToken) {
+            // Send token to your backend via HTTPS
+            sessionStorage.setItem('token', idToken);
+            console.log(idToken);
+          }).catch(function(error) {
+            // Handle error
           });
     }
     return (
